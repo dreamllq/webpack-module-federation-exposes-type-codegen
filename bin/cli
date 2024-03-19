@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
 require('ts-node/register');
-require('../lib/index.js')
+require('../lib/cli/index.js');
