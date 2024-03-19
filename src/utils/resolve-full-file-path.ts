@@ -2,7 +2,11 @@ import path from 'path';
 import fs from 'fs';
 import { defaultExts, defaultFileNames } from '@/configs/extensions';
 
-export const resolveFullFilePath = (_file:string) => {
+export const resolveFullFilePath = (file:string, options?:{cwd?:string}) => {
+  let _file = file;
+  if (options?.cwd) {
+    _file = path.join(options.cwd, file);
+  }
   const extname = path.extname(_file);
   if (extname === '') {
     const maybeAvailableFiles:string[] = [];
@@ -11,11 +15,11 @@ export const resolveFullFilePath = (_file:string) => {
     });
     defaultFileNames.forEach(fn => {
       defaultExts.forEach(ext => {
-        maybeAvailableFiles.push(`${path.join(_file, fn)}${ext}`);
+        maybeAvailableFiles.push(`${_file}${path.sep}${fn}${ext}`);
       });
     });
 
-    return maybeAvailableFiles.find(maf => fs.existsSync(maf)) || _file;
+    return maybeAvailableFiles.find(maf => fs.existsSync(maf)) || null;
   }
-  return _file;
+  return fs.existsSync(_file) ? _file : null;
 };
